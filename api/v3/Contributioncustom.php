@@ -89,7 +89,7 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
   while ($dao->fetch()) {
     $contribution[$dao->contribution_id] = $dao->toArray();
   }
-  return civicrm_api3_create_success($contribution, $params, 'Contribution', 'getparticipants', $dao);
+  return civicrm_api3_create_success($contribution, $params, 'contributioncustom', 'get', $dao);
 }
 
 function _civicrm_api3_contributioncustom_get_spec(&$params) {

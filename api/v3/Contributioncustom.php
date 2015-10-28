@@ -125,8 +125,9 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
       $endReceiveDate = CRM_Utils_Date::processDate($params['receive_date_to']);
       $whereClause [] = " civicrm_contribution.receive_date <= '{$endReceiveDate}' ";
   }
-  
-  $where .= " AND ". implode(' AND ', $whereClause);
+  if (!empty($whereClause)) {
+    $where .= " AND ". implode(' AND ', $whereClause);
+  }
   $sql	  = "$select $where";
   $sql	 .= " LIMIT 0, 25 "; 
                                

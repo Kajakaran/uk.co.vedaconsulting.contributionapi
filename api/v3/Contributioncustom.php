@@ -76,7 +76,7 @@ LEFT JOIN civicrm_option_value contribution_payment_instrument ON (civicrm_contr
 LEFT JOIN civicrm_option_group option_group_contribution_status ON (option_group_contribution_status.name = 'contribution_status') 
 LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.contribution_status_id = contribution_status.value
                                AND option_group_contribution_status.id = contribution_status.option_group_id ) 
-                               WHERE  ( civicrm_contribution.is_test = 0 )  AND (contact_a.is_deleted = 0)";
+                               WHERE  ( civicrm_contribution.is_test = 0 )  AND (contact_a.is_deleted = 0) LIMIT 0, 25";
   
   $dao	       = CRM_Core_DAO::executeQuery($query);
 

@@ -47,12 +47,7 @@ contribution_status.label as contribution_status,
 contribution_payment_instrument.label as payment_instrument, 
 contribution_payment_instrument.value as instrument_id, 
 contribution_payment_instrument.value as payment_instrument_id, 
-civicrm_contribution.check_number as contribution_check_number,
-civicrm_value_donor_information_3.id as civicrm_value_donor_information_3_id, 
-civicrm_value_donor_information_3.known_areas_of_interest_5 as custom_5, 
-civicrm_value_donor_information_3.how_long_have_you_been_a_donor_6 as custom_6,
-civicrm_value_draw_down_pledge.id as civicrm_value_draw_down_pledge_id,
-civicrm_value_draw_down_pledge.pledge_id as custom_43 
+civicrm_contribution.check_number as contribution_check_number
 FROM civicrm_contact contact_a 
 LEFT JOIN civicrm_contribution ON civicrm_contribution.contact_id = contact_a.id
 LEFT JOIN civicrm_contribution_soft ON civicrm_contribution_soft.contribution_id = civicrm_contribution.id
@@ -67,13 +62,13 @@ INNER JOIN civicrm_option_value cov ON cov.value = civicrm_entity_financial_acco
 INNER JOIN civicrm_option_group cog ON cog.id = cov.option_group_id AND cog.name = 'account_relationship' 
 LEFT  JOIN civicrm_contribution_product ON civicrm_contribution_product.contribution_id = civicrm_contribution.id 
 LEFT  JOIN civicrm_product ON civicrm_contribution_product.product_id =civicrm_product.id  
-LEFT JOIN civicrm_value_donor_information_3 ON civicrm_value_donor_information_3.entity_id = `civicrm_contribution`.id  
-LEFT JOIN civicrm_value_draw_down_pledge ON civicrm_value_draw_down_pledge.entity_id = `civicrm_contribution`.id
 LEFT JOIN civicrm_entity_financial_trxn ON (
         civicrm_entity_financial_trxn.entity_table = 'civicrm_contribution'
         AND civicrm_contribution.id = civicrm_entity_financial_trxn.entity_id ) LEFT JOIN civicrm_financial_trxn ON (
         civicrm_entity_financial_trxn.financial_trxn_id = civicrm_financial_trxn.id ) LEFT JOIN civicrm_entity_batch ON ( civicrm_entity_batch.entity_table = 'civicrm_financial_trxn'
-        AND civicrm_financial_trxn.id = civicrm_entity_batch.entity_id ) LEFT JOIN civicrm_batch ON civicrm_entity_batch.batch_id = civicrm_batch.id LEFT JOIN civicrm_note ON ( civicrm_note.entity_table = 'civicrm_contribution' AND
+        AND civicrm_financial_trxn.id = civicrm_entity_batch.entity_id )
+	LEFT JOIN civicrm_batch ON civicrm_entity_batch.batch_id = civicrm_batch.id
+	LEFT JOIN civicrm_note ON ( civicrm_note.entity_table = 'civicrm_contribution' AND
                                                     civicrm_contribution.id = civicrm_note.entity_id ) 
 LEFT JOIN civicrm_option_group option_group_payment_instrument ON ( option_group_payment_instrument.name = 'payment_instrument') 
 LEFT JOIN civicrm_option_value contribution_payment_instrument ON (civicrm_contribution.payment_instrument_id = contribution_payment_instrument.value

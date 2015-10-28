@@ -1,9 +1,38 @@
 <?php
 
 function civicrm_api3_contributioncustom_get($params) {
-  $query = "SELECT contact_a.id as contact_id,
+  $select = "SELECT contact_a.id as contact_id,
 civicrm_pcp.id as pcp_id,
+civicrm_pcp.status_id as pcp_status_id,
+civicrm_pcp.title as pcp_title,
+civicrm_pcp.intro_text as pcp_intro_text,
+civicrm_pcp.page_text as pcp_page_text,
+civicrm_pcp.donate_link_text as pcp_donate_link_text,
+civicrm_pcp.page_id as pcp_page_id,
+civicrm_pcp.page_type as pcp_page_type,
+civicrm_pcp.pcp_block_id as pcp_block_id,
+civicrm_pcp.is_thermometer as pcp_is_thermometer,
+civicrm_pcp.is_honor_roll as pcp_is_honor_roll,
+civicrm_pcp.goal_amount as pcp_goal_amount,
+civicrm_pcp.currency as pcp_currency,
+civicrm_pcp.is_active as pcp_is_active,
+civicrm_pcp.is_notify as pcp_is_notify,
 civicrm_event.id as event_id,
+civicrm_event.title as event_title,
+civicrm_event.summary as event_summary,
+civicrm_event.description as event_description,
+civicrm_event.event_type_id as event_type_id,
+civicrm_event.participant_listing_id as event_participant_listing_id,
+civicrm_event.is_public as is_public,
+civicrm_event.start_date as event_start_date,
+civicrm_event.end_date as event_end_date,
+civicrm_event.is_online_registration as event_is_online_registration,
+civicrm_event.registration_start_date as event_registration_start_date,
+civicrm_event.registration_end_date as event_registration_end_date,
+civicrm_event.max_participants as event_max_participants,
+civicrm_event.financial_type_id as event_financial_type_id,
+civicrm_event.payment_processor as event_payment_processor,
+civicrm_event.is_active as event_is_active,
 contact_a.contact_type  as `contact_type`, 
 contact_a.contact_sub_type  as `contact_sub_type`,
 contact_a.sort_name  as `sort_name`,
@@ -75,10 +104,33 @@ LEFT JOIN civicrm_option_value contribution_payment_instrument ON (civicrm_contr
                                AND option_group_payment_instrument.id = contribution_payment_instrument.option_group_id ) 
 LEFT JOIN civicrm_option_group option_group_contribution_status ON (option_group_contribution_status.name = 'contribution_status') 
 LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.contribution_status_id = contribution_status.value
-                               AND option_group_contribution_status.id = contribution_status.option_group_id ) 
-                               WHERE  ( civicrm_contribution.is_test = 0 )  AND (contact_a.is_deleted = 0) LIMIT 0, 25";
+                               AND option_group_contribution_status.id = contribution_status.option_group_id )";
   
-  $dao	       = CRM_Core_DAO::executeQuery($query);
+  $where = " WHERE ( civicrm_contribution.is_test = 0 )  AND (contact_a.is_deleted = 0) ";
+  $whereClause = array();
+  
+  if (isset($params['pcp_id']) && !empty($params['pcp_id'])) {
+    $whereClause [] = "civicrm_pcp.id = {$params['pcp_id']}";    
+  }
+  
+  if (isset($params['event_id']) && !empty($params['event_id'])) {
+    $whereClause [] = "civicrm_event.id = {$params['event_id']}";    
+  }
+  
+  if (!empty($params['receive_date_from'])) {
+    $startReceiveDate = CRM_Utils_Date::processDate($params['receive_date_from']);
+    $whereClause [] = " civicrm_contribution.receive_date >= '{$startReceiveDate}' ";
+  }
+  if (!empty($params['receive_date_to'])) {
+      $endReceiveDate = CRM_Utils_Date::processDate($params['receive_date_to']);
+      $whereClause [] = " civicrm_contribution.receive_date <= '{$endReceiveDate}' ";
+  }
+  
+  $where .= " AND ". implode(' AND ', $whereClause);
+  $sql	  = "$select $where";
+  $sql	 .= " LIMIT 0, 25 "; 
+                               
+  $dao	       = CRM_Core_DAO::executeQuery($sql);
 
   $contribution = array();
   while ($dao->fetch()) {
@@ -88,4 +140,8 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
 }
 
 function _civicrm_api3_contributioncustom_get_spec(&$params) {
+  $params['pcp_id']['api.aliases'] = array('PCP ID');
+  $params['event_id']['api.aliases'] = array('Event ID');
+  $params['receive_date_from']['api.aliases'] = array('Receive Date From');
+  $params['receive_date_to']['api.aliases'] = array('Receive Date To');
 }

@@ -189,4 +189,6 @@ function _civicrm_api3_contributioncustom_get_spec(&$params) {
   $params['check_number']['api.aliases'] = array('check_number');
   $params['campaign_id']['api.aliases'] = array('campaign_id');
   $params['contribution_id']['api.aliases'] = array('Contribution_id');
+  $params['financial_type_id']['api.aliases'] = array('financial_type_id');
+  $params['contribution_page_id']['api.aliases'] = array('contribution_page_id');
 }

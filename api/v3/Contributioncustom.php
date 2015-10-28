@@ -164,8 +164,11 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
     $where .= " AND ". implode(' AND ', $whereClause);
   }
   $sql	  = "$select $where";
-  $limit  = CRM_Utils_Array::value('limit', $params, 25);
-  $sql	 .= " LIMIT {$limit}";                                
+  $limit  = NULL;
+  if (isset($params['limit']) && !empty($params['limit'])) {
+    $limit	  = $params['limit'];
+    $sql	 .= " LIMIT {$limit}";                                
+  }
   $dao	  = CRM_Core_DAO::executeQuery($sql);
   $contribution = array();
   while ($dao->fetch()) {

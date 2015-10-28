@@ -93,11 +93,13 @@ LEFT  JOIN civicrm_contribution_product ON civicrm_contribution_product.contribu
 LEFT  JOIN civicrm_product ON civicrm_contribution_product.product_id =civicrm_product.id  
 LEFT JOIN civicrm_entity_financial_trxn ON (
         civicrm_entity_financial_trxn.entity_table = 'civicrm_contribution'
-        AND civicrm_contribution.id = civicrm_entity_financial_trxn.entity_id ) LEFT JOIN civicrm_financial_trxn ON (
-        civicrm_entity_financial_trxn.financial_trxn_id = civicrm_financial_trxn.id ) LEFT JOIN civicrm_entity_batch ON ( civicrm_entity_batch.entity_table = 'civicrm_financial_trxn'
+        AND civicrm_contribution.id = civicrm_entity_financial_trxn.entity_id )
+LEFT JOIN civicrm_financial_trxn ON (
+        civicrm_entity_financial_trxn.financial_trxn_id = civicrm_financial_trxn.id )
+LEFT JOIN civicrm_entity_batch ON ( civicrm_entity_batch.entity_table = 'civicrm_financial_trxn'
         AND civicrm_financial_trxn.id = civicrm_entity_batch.entity_id )
-	LEFT JOIN civicrm_batch ON civicrm_entity_batch.batch_id = civicrm_batch.id
-	LEFT JOIN civicrm_note ON ( civicrm_note.entity_table = 'civicrm_contribution' AND
+LEFT JOIN civicrm_batch ON civicrm_entity_batch.batch_id = civicrm_batch.id
+LEFT JOIN civicrm_note ON ( civicrm_note.entity_table = 'civicrm_contribution' AND
                                                     civicrm_contribution.id = civicrm_note.entity_id ) 
 LEFT JOIN civicrm_option_group option_group_payment_instrument ON ( option_group_payment_instrument.name = 'payment_instrument') 
 LEFT JOIN civicrm_option_value contribution_payment_instrument ON (civicrm_contribution.payment_instrument_id = contribution_payment_instrument.value
@@ -106,7 +108,7 @@ LEFT JOIN civicrm_option_group option_group_contribution_status ON (option_group
 LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.contribution_status_id = contribution_status.value
                                AND option_group_contribution_status.id = contribution_status.option_group_id )";
   
-  $where = " WHERE ( civicrm_contribution.is_test = 0 )  AND (contact_a.is_deleted = 0) ";
+  $where = " WHERE (contact_a.is_deleted = 0) ";
   $whereClause = array();
   
   if (isset($params['pcp_id']) && !empty($params['pcp_id'])) {
@@ -115,6 +117,39 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
   
   if (isset($params['event_id']) && !empty($params['event_id'])) {
     $whereClause [] = "civicrm_event.id = {$params['event_id']}";    
+  }
+  if (isset($params['total_amount']) && !empty($params['total_amount'])) {
+    $whereClause [] = "civicrm_contribution.total_amount = {$params['total_amount']}";
+  }
+  if (isset($params['contribution_page_id']) && !empty($params['contribution_page_id'])) {
+    $whereClause [] = "civicrm_contribution.contribution_page_id = {$params['contribution_page_id']}";
+  }
+  if (isset($params['financial_type_id']) && !empty($params['financial_type_id'])) {
+    $whereClause [] = "civicrm_contribution.financial_type_id = {$params['financial_type_id']}";
+  }
+  if (isset($params['payment_instrument_id']) && !empty($params['payment_instrument_id'])) {
+    $whereClause [] = "civicrm_contribution.payment_instrument_id = {$params['payment_instrument_id']}";    
+  }
+  if (isset($params['source']) && !empty($params['source'])) {
+    $whereClause [] = "civicrm_contribution.source = '{$params['source']}'";    
+  } 
+  if (isset($params['is_test']) && !empty($params['is_test'])) {
+    $whereClause [] = "civicrm_contribution.is_test = {$params['is_test']}";    
+  }
+  if (isset($params['net_amount']) && !empty($params['net_amount'])) {
+    $whereClause [] = "civicrm_contribution.net_amount = {$params['net_amount']}";    
+  }
+  if (isset($params['campaign_id']) && !empty($params['campaign_id'])) {
+    $whereClause [] = "civicrm_contribution.campaign_id = {$params['campaign_id']}";    
+  }
+  if (isset($params['is_pay_later']) && !empty($params['is_pay_later'])) {
+    $whereClause [] = "civicrm_contribution.is_pay_later = {$params['is_pay_later']}";    
+  }
+  if (isset($params['check_number']) && !empty($params['check_number'])) {
+    $whereClause [] = "civicrm_contribution.check_number = '{$params['check_number']}'";    
+  }
+  if (isset($params['contribution_id']) && !empty($params['contribution_id'])) {
+    $whereClause [] = "civicrm_contribution.id = {$params['contribution_id']}";    
   }
   
   if (!empty($params['receive_date_from'])) {
@@ -145,4 +180,13 @@ function _civicrm_api3_contributioncustom_get_spec(&$params) {
   $params['event_id']['api.aliases'] = array('Event ID');
   $params['receive_date_from']['api.aliases'] = array('Receive Date From');
   $params['receive_date_to']['api.aliases'] = array('Receive Date To');
+  $params['total_amount']['api.aliases'] = array('total_amount');
+  $params['source']['api.aliases'] = array('source');
+  $params['net_amount']['api.aliases'] = array('net_amount');
+  $params['is_test']['api.aliases'] = array('is_test');
+  $params['is_pay_later']['api.aliases'] = array('is_pay_later');
+  $params['payment_instrument']['api.aliases'] = array('payment_instrument');
+  $params['check_number']['api.aliases'] = array('check_number');
+  $params['campaign_id']['api.aliases'] = array('campaign_id');
+  $params['contribution_id']['api.aliases'] = array('Contribution_id');
 }
